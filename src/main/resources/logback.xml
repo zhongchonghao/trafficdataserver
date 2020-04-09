@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 定义参数 -->
+    <!--    <property name="log.filePath" value="/usr/local/webapp/jar/jar-9080-egintrapayrec/logs/egintrapay_rec"/>-->
+    <property name="log.filePath" value="F:/logs/trafficdataserver"/>
+    <property name="log.projectName" value="trafficdataserver"/>
+
+    <!-- 配置控制台日志 -->
+    <appender name="consoleLog" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>
+                <!--%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg  %n-->
+                %d [%thread]-%class.%method:%line %level - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!-- Info级别的日志文件配置 -->
+    <appender name="fileInfoLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 将ERROR级别的日志过滤掉 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR,DEBUG</level>
+            <onMatch>DENY</onMatch>
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>
+                %d [%thread]-%class.%method:%line %level - %msg%n
+            </pattern>
+        </encoder>
+        <!-- 滚动策略，每天生成一个日志文件 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 路径 -->
+            <fileNamePattern>${log.filePath}/info/${log.projectName}_info_%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!--<fileNamePattern>${log.filePath}/info/info.%d{yyyy-MM-dd_HH-mm}.%i.log</fileNamePattern>-->
+            <!--日志文件保留天数-->
+            <!--<MaxHistory>30</MaxHistory>-->
+            <!--大小策略 超过100MB就分包-->
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 100MB -->
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <!-- ERROR级别的日志文件配置 -->
+    <appender name="fileErrorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder>
+            <pattern>
+                %d [%thread]-%class.%method:%line %level - %msg%n
+            </pattern>
+        </encoder>
+        <!-- 滚动策略，每天生成一个日志文件 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--路径-->
+            <fileNamePattern>${log.filePath}/error/${log.projectName}_error_%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!--            <fileNamePattern>${log.filePath}/error/error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>-->
+            <!--日志文件保留天数-->
+            <!--<MaxHistory>30</MaxHistory>-->
+            <!--大小策略 超过100MB就分包-->
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 100MB -->
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <!-- ERROR级别的日志文件配置 -->
+    <appender name="fileDebugLog" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+    </appender>
+
+    <!--打印SQL-->
+    <logger name="com.kaiyun.io" level="DEBUG"/>
+
+    <!--  过滤第三方日志-->
+    <logger name="org.apache.cxf" level="error"/>
+
+    <!-- 将配置应用到root目录下 -->
+    <root level="info">
+        <appender-ref ref="consoleLog"/>
+        <appender-ref ref="fileInfoLog"/>
+        <appender-ref ref="fileErrorLog"/>
+        <appender-ref ref="fileDebugLog"/>
+    </root>
+</configuration>

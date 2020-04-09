@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!-- database.properties配置文件 -->
+    <properties resource="database.properties"/>
+
+    <!-- DRUID数据源 -->
+    <typeAliases>
+        <typeAlias type="com.kaiyun.io.common.datasource.DruidDataSourceFactory"
+                   alias="DRUID"/>
+    </typeAliases>
+
+    <!-- development : 开发模式 work : 工作模式 -->
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <!-- POOLED指的是org.apache.ibatis.datasource.pooled.PooledDataSource, 一个数据源的实现类-->
+            <!-- <dataSource type="POOLED"> -->
+            <dataSource type="DRUID">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!-- 配置映射-->
+    <mappers>
+        <!-- 若映射文件mapper 是xml，则<mapper recourse...>；若映射文件为java文件，则<mapper class.....> -->
+        <mapper class="com.kaiyun.io.mapper.TrafficVehicleLocationMapper"/>
+    </mappers>
+</configuration>
