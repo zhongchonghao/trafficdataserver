@@ -1,9 +1,12 @@
 package com.kaiyun.io.bean.dto;
 
+import com.kaiyun.io.common.util.ArithmeticUtils;
 import com.kaiyun.io.packet.TrafficVehicleLocationPacket;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -20,6 +23,8 @@ import java.util.Date;
 @Setter
 @ToString
 public class TrafficVehicleLocationDTO {
+    private static Logger logger = LoggerFactory.getLogger(TrafficVehicleLocationDTO.class);
+
     /**
      * 车牌号 21字节
      */
@@ -69,14 +74,23 @@ public class TrafficVehicleLocationDTO {
      */
     private int alarm;
 
-    public TrafficVehicleLocationDTO(TrafficVehicleLocationPacket packet) throws ParseException {
+    public TrafficVehicleLocationDTO(TrafficVehicleLocationPacket packet) {
         this.vehicleNo = packet.getVehicleNo();
-        this.latitude = (double) (packet.getLat() / 1000000);
-        this.longitude = (double) (packet.getLon() / 1000000);
+        this.latitude = ArithmeticUtils.div(packet.getLat(), 1000000, 6);
+        this.longitude = ArithmeticUtils.div(packet.getLon(), 1000000, 6);
         this.altitude = packet.getAltitude();
         this.speed = packet.getVec1();
         this.direction = packet.getDirection();
-        this.time = new Timestamp(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(packet.getDate() + " " + packet.getTime()).getTime());
+        this.time = null;
+        try {
+            String dateTime = packet.getDate() + " " + packet.getTime();
+            String dateFormat = "yyyy-MM-dd HH:mm:ss";
+            time = new Timestamp(new SimpleDateFormat(dateFormat.substring(0, dateTime.length())).parse(dateTime).getTime());
+        } catch (ParseException e) {
+            logger.error("DTO数据转换异常，传入时间格式有误，数据为：{}，异常为：{}", packet.getDate() + " " + packet.getTime(), e.getMessage());
+        } finally {
+            new Timestamp(System.currentTimeMillis());
+        }
         this.vehicleColor = packet.getVehicleColor();
         this.vehicleSpeed = packet.getVec2();
         this.mileage = packet.getVec3();

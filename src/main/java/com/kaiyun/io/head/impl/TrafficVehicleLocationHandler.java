@@ -9,8 +9,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.ParseException;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ExecutorService;
 
 /**
  * @program: trafficdataserver
@@ -21,10 +20,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class TrafficVehicleLocationHandler extends SimpleChannelInboundHandler<TrafficVehicleLocationPacket> {
     private static Logger logger = LoggerFactory.getLogger(TrafficVehicleLocationHandler.class);
 
-    private static ThreadPoolExecutor executor = ThreadPoolFactory.newSynchronousQueueExecutor(256);
+    private static ExecutorService executor = ThreadPoolFactory.newSynchronousQueueExecutor(256);
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, TrafficVehicleLocationPacket msg) throws ParseException {
+    protected void channelRead0(ChannelHandlerContext ctx, TrafficVehicleLocationPacket msg) {
         logger.info("车辆定位信息：{}", msg);
         // 获取DTO对象
         TrafficVehicleLocationDTO trafficVehicleLocationDTO = new TrafficVehicleLocationDTO(msg);
