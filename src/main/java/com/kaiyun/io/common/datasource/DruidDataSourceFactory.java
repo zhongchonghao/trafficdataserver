@@ -27,7 +27,20 @@ public class DruidDataSourceFactory implements DataSourceFactory {
         dds.setUrl(this.props.getProperty("url"));
         dds.setUsername(this.props.getProperty("username"));
         dds.setPassword(this.props.getProperty("password"));
-        // 其他配置可以根据MyBatis主配置文件进行配置
+
+        // 其他配置根据MyBatis主配置文件进行配置
+        dds.setInitialSize(Integer.parseInt(this.props.getProperty("initialSize")));
+        dds.setMinIdle(Integer.parseInt(this.props.getProperty("minIdle")));
+        dds.setMaxActive(Integer.parseInt(this.props.getProperty("maxActive")));
+        dds.setMaxWait(Long.parseLong(this.props.getProperty("maxWait")));
+        dds.setTimeBetweenEvictionRunsMillis(Long.parseLong(this.props.getProperty("timeBetweenEvictionRunsMillis")));
+        dds.setMinEvictableIdleTimeMillis(Long.parseLong(this.props.getProperty("minEvictableIdleTimeMillis")));
+        dds.setValidationQuery(this.props.getProperty("validationQuery"));
+        dds.setTestWhileIdle(Boolean.parseBoolean(this.props.getProperty("testWhileIdle")));
+        dds.setTestOnBorrow(Boolean.parseBoolean(this.props.getProperty("testOnBorrow")));
+        dds.setTestOnReturn(Boolean.parseBoolean(this.props.getProperty("testOnReturn")));
+        dds.setPoolPreparedStatements(Boolean.parseBoolean(this.props.getProperty("poolPreparedStatements")));
+        dds.setMaxPoolPreparedStatementPerConnectionSize(Integer.parseInt(this.props.getProperty("maxPoolPreparedStatementPerConnectionSize")));
         try {
             dds.init();
         } catch (SQLException e) {
